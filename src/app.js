@@ -153,6 +153,8 @@ function createApp() {
   app.use("/api/pagos", require("./routes/pagos.routes"));
 
   app.use("/api/seguridad", require("./routes/seguridad.routes"));
+  
+  app.use("/api/auth", require("./routes/auth.routes"));
 
   // ========================================
   // Manejo de errores
