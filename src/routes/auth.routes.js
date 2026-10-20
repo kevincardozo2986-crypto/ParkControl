@@ -1,7 +1,9 @@
+
 const express = require("express");
 
 const {
   registrar,
+  crearPorAdministrador,
   login,
 } = require("../controllers/auth.controller");
 
@@ -10,23 +12,18 @@ const {
   validarLogin,
 } = require("../middlewares/auth.validator");
 
-const autenticarJWT =
-  require("../middlewares/auth.middleware");
+const autenticarJWT = require("../middlewares/auth.middleware");
+const autorizarRoles = require("../middlewares/roles.middleware");
 
 const router = express.Router();
 
-// ========================================
-// REGISTRO
-// ========================================
-
 /**
- * @swagger
+ * @openapi
  * /api/auth/registro:
  *   post:
- *     tags:
- *       - Autenticación
- *     summary: Registrar un nuevo usuario
- *     description: Registra un usuario almacenando su contraseña mediante bcrypt.
+ *     tags: [Autenticación]
+ *     summary: Registro público de usuario
+ *     description: El registro público siempre asigna el rol usuario, incluso si se envía otro rol.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -35,10 +32,7 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - nombre
- *               - email
- *               - password
+ *             required: [nombre, email, password]
  *             properties:
  *               nombre:
  *                 type: string
@@ -50,34 +44,20 @@ const router = express.Router();
  *               password:
  *                 type: string
  *                 format: password
- *                 minLength: 10
  *                 example: ClaveSegura2026!
+ *               rol:
+ *                 type: string
+ *                 example: administrador
+ *                 description: Este campo es ignorado por seguridad.
  *     responses:
- *       201:
- *         description: Usuario registrado correctamente
- *       400:
- *         description: Datos de registro inválidos
- *       409:
- *         description: El correo ya se encuentra registrado
- */
-router.post(
-  "/registro",
-  validarRegistro,
-  registrar,
-);
-
-// ========================================
-// LOGIN
-// ========================================
-
-/**
- * @swagger
+ *       '201': { description: Usuario normal registrado }
+ *       '400': { description: Datos inválidos }
+ *       '409': { description: Correo duplicado }
+ *
  * /api/auth/login:
  *   post:
- *     tags:
- *       - Autenticación
+ *     tags: [Autenticación]
  *     summary: Iniciar sesión y obtener JWT
- *     description: Verifica las credenciales del usuario y genera un token JWT.
  *     security:
  *       - ApiKeyAuth: []
  *     requestBody:
@@ -86,64 +66,106 @@ router.post(
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - email
- *               - password
+ *             required: [email, password]
  *             properties:
  *               email:
  *                 type: string
  *                 format: email
- *                 example: usuario@parkcontrol.com
+ *                 example: admin@parkcontrol.com
  *               password:
  *                 type: string
  *                 format: password
- *                 example: ClaveSegura2026!
+ *                 example: ClaveAdmin2026!
  *     responses:
- *       200:
- *         description: Autenticación correcta y JWT generado
- *       400:
- *         description: Datos de inicio de sesión inválidos
- *       401:
- *         description: Credenciales inválidas
- */
-router.post(
-  "/login",
-  validarLogin,
-  login,
-);
-
-// ========================================
-// PERFIL PROTEGIDO CON JWT
-// ========================================
-
-/**
- * @swagger
+ *       '200': { description: JWT generado }
+ *       '400': { description: Datos inválidos }
+ *       '401': { description: Credenciales inválidas }
+ *
+ * /api/auth/usuarios:
+ *   post:
+ *     tags: [Autenticación]
+ *     summary: Crear usuario desde administración
+ *     description: Solo administradores pueden crear usuarios con roles específicos.
+ *     security:
+ *       - ApiKeyAuth: []
+ *         BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [nombre, email, password, rol]
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 example: Administrador Secundario
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: admin2@parkcontrol.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 10
+ *                 example: ClaveSegura2026!
+ *               rol:
+ *                 type: string
+ *                 enum: [usuario, administrador]
+ *                 example: administrador
+ *     responses:
+ *       '201': { description: Usuario creado correctamente }
+ *       '400': { description: Datos inválidos o rol no permitido }
+ *       '401': { description: No autenticado }
+ *       '403': { description: Solo administradores }
+ *       '409': { description: Correo duplicado }
+ *
  * /api/auth/perfil:
  *   get:
- *     tags:
- *       - Autenticación
- *     summary: Obtener perfil del usuario autenticado
- *     description: Requiere API Key y un JWT válido.
+ *     tags: [Autenticación]
+ *     summary: Consultar perfil autenticado
  *     security:
  *       - ApiKeyAuth: []
  *         BearerAuth: []
  *     responses:
- *       200:
- *         description: Usuario autenticado correctamente
- *       401:
- *         description: Credenciales de autenticación ausentes o inválidas
+ *       '200': { description: Usuario autenticado }
+ *       '401': { description: No autenticado }
  */
+
+// Registro público
+router.post(
+  "/registro",
+  validarRegistro,
+  registrar
+);
+
+// Login
+router.post(
+  "/login",
+  validarLogin,
+  login
+);
+
+// Crear usuario: solo administrador
+router.post(
+  "/usuarios",
+  autenticarJWT,
+  autorizarRoles("administrador"),
+  validarRegistro,
+  crearPorAdministrador
+);
+
+// Perfil
 router.get(
   "/perfil",
   autenticarJWT,
   (req, res) => {
     return res.status(200).json({
-      mensaje:
-        "Usuario autenticado mediante JWT",
+      mensaje: "Usuario autenticado mediante JWT",
       usuario: req.usuario,
       clienteApi: req.clienteApi,
     });
-  },
+  }
 );
 
 module.exports = router;

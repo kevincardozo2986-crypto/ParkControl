@@ -168,15 +168,41 @@ function createApp() {
 // ========================================
 // Iniciar servidor
 // ========================================
+
+const usuariosService = require("./services/usuarios.service");
+
+// ========================================
+// Iniciar servidor con administrador
+// ========================================
+const iniciarServidor = async () => {
+  try {
+    const config = loadConfig();
+
+    await usuariosService.crearAdministradorInicial();
+
+    createApp().listen(config.port, () => {
+      console.log(
+        `Servidor: http://localhost:${config.port}`
+      );
+
+      console.log(
+        `Swagger: http://localhost:${config.port}/api-docs`
+      );
+    });
+  } catch (error) {
+    console.error(
+      "Error al iniciar el servidor:",
+      error.message
+    );
+
+    process.exit(1);
+  }
+};
+
 if (require.main === module) {
-  const config = loadConfig();
-
-  createApp().listen(config.port, () => {
-    console.log(`Servidor: http://localhost:${config.port}`);
-
-    console.log(`Swagger: http://localhost:${config.port}/api-docs`);
-  });
+  iniciarServidor();
 }
+
 
 module.exports = {
   createApp,

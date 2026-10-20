@@ -1,5 +1,7 @@
+
 const {
   crearUsuario,
+  crearUsuarioAdministrativo,
   autenticarUsuario,
 } = require("../services/usuarios.service");
 
@@ -7,20 +9,14 @@ const {
   generarToken,
 } = require("../utils/jwt.util");
 
-// ========================================
-// Registrar usuario
-// ========================================
+// Registro público
 const registrar = async (req, res, next) => {
   try {
-    const {
-      nombre,
-      email,
-      password,
-    } = req.body;
+    const { nombre, email, password } = req.body;
 
     const usuario = await crearUsuario({
-      nombre: nombre.trim(),
-      email: email.trim(),
+      nombre,
+      email,
       password,
     });
 
@@ -33,32 +29,50 @@ const registrar = async (req, res, next) => {
   }
 };
 
-// ========================================
-// Iniciar sesión
-// ========================================
-const login = async (req, res, next) => {
+// Creación de usuarios por administrador
+const crearPorAdministrador = async (req, res, next) => {
   try {
     const {
+      nombre,
       email,
       password,
+      rol,
     } = req.body;
+
+    const usuario = await crearUsuarioAdministrativo({
+      nombre,
+      email,
+      password,
+      rol,
+    });
+
+    return res.status(201).json({
+      mensaje: "Usuario creado por el administrador",
+      usuario,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Inicio de sesión
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
     const usuario = await autenticarUsuario(
       email.trim(),
-      password,
+      password
     );
 
-    // Credenciales incorrectas
     if (!usuario) {
       return res.status(401).json({
         mensaje: "Credenciales inválidas",
       });
     }
 
-    // Generar JWT
     const token = generarToken(usuario);
 
-    // Login correcto
     return res.status(200).json({
       mensaje: "Autenticación correcta",
       usuario,
@@ -71,5 +85,6 @@ const login = async (req, res, next) => {
 
 module.exports = {
   registrar,
+  crearPorAdministrador,
   login,
 };

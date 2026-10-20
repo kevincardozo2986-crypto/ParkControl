@@ -1,3 +1,4 @@
+
 const swaggerJsdoc = require("swagger-jsdoc");
 
 module.exports = swaggerJsdoc({
@@ -8,7 +9,7 @@ module.exports = swaggerJsdoc({
       title: "ParkControl API",
       version: "4.0.0",
       description:
-        "API REST segura para gestión de parqueadero con autenticación mediante API Key y JWT.",
+        "API REST segura para gestión de parqueadero con autenticación mediante API Key y JWT, y autorización basada en roles.",
     },
 
     servers: [
@@ -19,8 +20,11 @@ module.exports = swaggerJsdoc({
     ],
 
     // ========================================
-    // Seguridad global
+    // Seguridad global: API Key
     // ========================================
+    // Las rutas que también requieren JWT
+    // declaran ambas credenciales mediante
+    // security en su documentación.
     security: [
       {
         ApiKeyAuth: [],
@@ -48,7 +52,7 @@ module.exports = swaggerJsdoc({
           scheme: "bearer",
           bearerFormat: "JWT",
           description:
-            "JWT obtenido mediante el endpoint de login.",
+            "JWT obtenido mediante POST /api/auth/login. Introducir únicamente el token.",
         },
       },
 
@@ -91,10 +95,6 @@ module.exports = swaggerJsdoc({
             },
             placa: {
               type: "string",
-            },
-            tipo: {
-              type: "string",
-              enum: ["carro", "moto"],
             },
             marca: {
               type: "string",

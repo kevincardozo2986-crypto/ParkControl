@@ -1,3 +1,4 @@
+
 const usuarios = require("../data/usuarios");
 
 const {
@@ -5,107 +6,159 @@ const {
   verificarPassword,
 } = require("../utils/password.util");
 
-// ========================================
-// Buscar usuario por email
-// ========================================
 const buscarPorEmail = (email) => {
   return usuarios.find(
     (usuario) =>
-      usuario.email.toLowerCase() === email.toLowerCase(),
+      usuario.email.toLowerCase() === email.toLowerCase()
   );
 };
 
-// ========================================
-// Crear usuario
-// ========================================
-const crearUsuario = async ({
+const siguienteId = () => {
+  return usuarios.length > 0
+    ? Math.max(...usuarios.map((usuario) => usuario.id)) + 1
+    : 1;
+};
+
+const datosPublicos = (usuario) => ({
+  id: usuario.id,
+  nombre: usuario.nombre,
+  email: usuario.email,
+  rol: usuario.rol,
+  activo: usuario.activo,
+});
+
+const guardarUsuario = async ({
   nombre,
   email,
   password,
+  rol,
 }) => {
-  // Verificar si el correo ya existe
-  const usuarioExistente = buscarPorEmail(email);
+  const emailNormalizado = email.trim().toLowerCase();
 
-  if (usuarioExistente) {
+  if (buscarPorEmail(emailNormalizado)) {
     const error = new Error(
-      "El correo ya se encuentra registrado",
+      "El correo ya se encuentra registrado"
     );
-
     error.status = 409;
     throw error;
   }
 
-  // Generar hash con bcrypt
-  const passwordHash =
-    await generarPasswordHash(password);
+  const passwordHash = await generarPasswordHash(password);
 
-  // Crear usuario
   const nuevoUsuario = {
-    id: usuarios.length + 1,
-    nombre,
-    email: email.toLowerCase(),
+    id: siguienteId(),
+    nombre: nombre.trim(),
+    email: emailNormalizado,
     passwordHash,
-
-    // Datos necesarios para JWT
-    rol: "usuario",
+    rol,
     activo: true,
   };
 
   usuarios.push(nuevoUsuario);
 
-  // Nunca devolver passwordHash
-  return {
-    id: nuevoUsuario.id,
-    nombre: nuevoUsuario.nombre,
-    email: nuevoUsuario.email,
-    rol: nuevoUsuario.rol,
-    activo: nuevoUsuario.activo,
-  };
+  return datosPublicos(nuevoUsuario);
 };
 
-// ========================================
-// Autenticar usuario
-// ========================================
+// Registro público: SIEMPRE usuario normal.
+const crearUsuario = async ({
+  nombre,
+  email,
+  password,
+}) => {
+  return guardarUsuario({
+    nombre,
+    email,
+    password,
+    rol: "usuario",
+  });
+};
+
+// Creación administrativa: permite roles autorizados.
+const crearUsuarioAdministrativo = async ({
+  nombre,
+  email,
+  password,
+  rol,
+}) => {
+  const rolesPermitidos = [
+    "usuario",
+    "administrador",
+  ];
+
+  if (!rolesPermitidos.includes(rol)) {
+    const error = new Error("Rol no permitido");
+    error.status = 400;
+    throw error;
+  }
+
+  return guardarUsuario({
+    nombre,
+    email,
+    password,
+    rol,
+  });
+};
+
 const autenticarUsuario = async (
   email,
   password,
 ) => {
   const usuario = buscarPorEmail(email);
 
-  // Usuario inexistente
-  if (!usuario) {
+  if (!usuario || !usuario.activo) {
     return null;
   }
 
-  // Comparar contraseña con bcrypt
-  const passwordValida =
-    await verificarPassword(
-      password,
-      usuario.passwordHash,
-    );
+  const passwordValida = await verificarPassword(
+    password,
+    usuario.passwordHash
+  );
 
-  // Contraseña incorrecta
   if (!passwordValida) {
     return null;
   }
 
-  // Usuario deshabilitado
-  if (!usuario.activo) {
+  return datosPublicos(usuario);
+};
+
+const crearAdministradorInicial = async () => {
+  const nombre = process.env.ADMIN_NOMBRE;
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!nombre || !email || !password) {
+    console.warn("Administrador inicial no configurado");
     return null;
   }
 
-  // Nunca devolver passwordHash
-  return {
-    id: usuario.id,
-    nombre: usuario.nombre,
-    email: usuario.email,
-    rol: usuario.rol,
-    activo: usuario.activo,
+  const existente = buscarPorEmail(email);
+
+  if (existente) {
+    return existente;
+  }
+
+  const passwordHash = await generarPasswordHash(password);
+
+  const administrador = {
+    id: siguienteId(),
+    nombre,
+    email: email.trim().toLowerCase(),
+    passwordHash,
+    rol: "administrador",
+    activo: true,
   };
+
+  usuarios.push(administrador);
+
+  console.log("Administrador inicial creado");
+
+  return administrador;
 };
 
 module.exports = {
   buscarPorEmail,
   crearUsuario,
+  crearUsuarioAdministrativo,
   autenticarUsuario,
+  crearAdministradorInicial,
 };
