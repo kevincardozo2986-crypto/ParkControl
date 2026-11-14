@@ -15,8 +15,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Pagos]
  *     summary: Listar pagos
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200': { description: Lista de pagos }
  *       '401': { description: No autenticado }
@@ -25,8 +24,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Pagos]
  *     summary: Registrar pago (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -54,8 +52,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Pagos]
  *     summary: Consultar pago por ID
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -72,14 +69,14 @@ const autorizarRoles = require("../middlewares/roles.middleware");
 r.get(
   "/",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.todos
 );
 
 r.get(
   "/:id",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   v.id,
   validar,
   c.porId
@@ -89,7 +86,7 @@ r.get(
 r.post(
   "/",
   autenticarJWT,
-  autorizarRoles("administrador"),
+  autorizarRoles("administrador", "operador"),
   v.campos,
   validar,
   c.crear

@@ -1,0 +1,12 @@
+{
+  "6": "Falso positivo. ZAP envió numero=\"espacios\" (valor válido). Verificación manual: ../../etc/passwd, ..%2f..%2fwin.ini, C:\\Windows\\win.ini y /etc/passwd → 400. El campo solo admite [A-Za-z0-9-] y el endpoint no accede al sistema de archivos.",
+  "10003": "Corregido. swagger-ui-dist 5.33.0 → 5.34.1 (DOMPurify embebido 3.4.13 → 3.4.17). npm audit no lo detectaba porque la librería viene empaquetada en el bundle.",
+  "10038": "Corregido. API: Helmet con CSP (script-src 'self', frame-ancestors 'none'). Frontend: CSP en server y preview de Vite.",
+  "10020": "Corregido. X-Frame-Options: DENY y frame-ancestors 'none' en vite.config.js.",
+  "10021": "Corregido. X-Content-Type-Options: nosniff en vite.config.js.",
+  "10096": "Falso positivo. Constantes numéricas dentro del JavaScript de Swagger UI (p. ej. 1518500249), no son marcas de tiempo del sistema.",
+  "10111": "Informativo. ZAP identifica el endpoint de autenticación; está protegido por validación y rate limit (10 intentos / 15 min).",
+  "10109": "Informativo. Identificación de SPA moderna; no es una vulnerabilidad.",
+  "10027": "Informativo / falso positivo. Comentarios del cliente de desarrollo de Vite; en el build de producción la coincidencia es texto de la interfaz.",
+  "10055": "Riesgo aceptado en /api-docs: Swagger UI requiere estilos en línea. Recomendación: no exponer Swagger en producción. En el frontend de producción no aparece."
+}

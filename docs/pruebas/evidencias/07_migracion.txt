@@ -1,0 +1,18 @@
+== corrida 1
+      rol      | activo | cuentas 
+---------------+--------+---------
+ administrador | t      |       0
+ conductor     | t      |       1
+ operador      | t      |       0
+ usuario       | f      |       0
+(4 filas)
+
+== corrida 2
+      rol      | activo | cuentas 
+---------------+--------+---------
+ administrador | t      |       0
+ conductor     | t      |       1
+ operador      | t      |       0
+ usuario       | f      |       0
+(4 filas)
+

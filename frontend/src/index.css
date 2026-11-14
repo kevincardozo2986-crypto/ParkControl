@@ -1,0 +1,78 @@
+/* ParkControl — tokens del sistema de diseño (tema oscuro con acento morado) */
+:root {
+  --pc-bg: #0b0b0e;
+  --pc-surface: #15151a;
+  --pc-surface-2: #1c1c22;
+  --pc-surface-3: #24242c;
+  --pc-border: #26262e;
+  --pc-border-strong: #33333d;
+  --pc-text: #f4f4f6;
+  --pc-text-2: #cfcfd8;
+  --pc-muted: #8e8e9a;
+  --pc-subtle: #5f5f6b;
+
+  --pc-primary: #a855f7;
+  --pc-primary-600: #9333ea;
+  --pc-primary-50: rgba(168, 85, 247, .13);
+  --pc-primary-100: rgba(168, 85, 247, .24);
+  --pc-accent-2: #d08bff;
+
+  --pc-accent: #f5b400;      /* amarillo placa / señalización */
+  --pc-success: #34d399;
+  --pc-success-50: rgba(52, 211, 153, .13);
+  --pc-warning: #fbbf24;
+  --pc-warning-50: rgba(251, 191, 36, .13);
+  --pc-danger: #f87171;
+  --pc-danger-50: rgba(248, 113, 113, .13);
+
+  --pc-side: #0e0e12;
+  --pc-side-2: #18181e;
+  --pc-side-text: #9a9aa6;
+
+  --pc-radius: 18px;
+  --pc-radius-sm: 12px;
+  --pc-shadow-sm: 0 1px 0 rgba(255, 255, 255, .03) inset, 0 1px 2px rgba(0, 0, 0, .4);
+  --pc-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 14px 34px -18px rgba(0, 0, 0, .8);
+  --pc-shadow-lg: 0 30px 80px -24px rgba(0, 0, 0, .9);
+
+  --bs-body-font-family: "Inter Variable", Inter, system-ui, "Segoe UI", Arial, sans-serif;
+  --bs-body-bg: var(--pc-bg);
+  --bs-body-color: var(--pc-text);
+  --bs-border-color: var(--pc-border);
+  --bs-secondary-color: var(--pc-muted);
+  --bs-primary: var(--pc-primary);
+  --bs-primary-rgb: 168, 85, 247;
+  --bs-link-color: var(--pc-accent-2);
+  --bs-link-hover-color: #e9c6ff;
+  --bs-link-color-rgb: 208, 139, 255;
+  --bs-link-hover-color-rgb: 233, 198, 255;
+
+  color-scheme: dark;
+  font-family: var(--bs-body-font-family);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: var(--pc-bg);
+  --bs-body-color: var(--pc-text);
+  --bs-border-color: var(--pc-border);
+  --bs-secondary-color: var(--pc-muted);
+  --bs-tertiary-bg: var(--pc-surface-2);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--pc-bg);
+  color: var(--pc-text);
+  font-size: 14px;
+}
+
+::selection { background: rgba(168, 85, 247, .35); color: #fff; }
+
+/* Barras de desplazamiento oscuras */
+* { scrollbar-color: #2e2e38 transparent; scrollbar-width: thin; }

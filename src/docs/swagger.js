@@ -7,9 +7,9 @@ module.exports = swaggerJsdoc({
 
     info: {
       title: "ParkControl API",
-      version: "4.0.0",
+      version: "5.0.0",
       description:
-        "API REST segura para gestión de parqueadero con autenticación mediante API Key y JWT, y autorización basada en roles.",
+        "API REST segura para gestión de parqueadero. Clientes web: JWT (Bearer) + RBAC (administrador, operador). Integraciones privadas: API Key.",
     },
 
     servers: [
@@ -20,14 +20,13 @@ module.exports = swaggerJsdoc({
     ],
 
     // ========================================
-    // Seguridad global: API Key
+    // Seguridad global: JWT
     // ========================================
-    // Las rutas que también requieren JWT
-    // declaran ambas credenciales mediante
-    // security en su documentación.
+    // Cada ruta declara su esquema; las públicas usan security: []
+    // y las integraciones privadas ApiKeyAuth.
     security: [
       {
-        ApiKeyAuth: [],
+        BearerAuth: [],
       },
     ],
 
@@ -96,6 +95,10 @@ module.exports = swaggerJsdoc({
             placa: {
               type: "string",
             },
+            tipo: {
+              type: "string",
+              enum: ["carro", "moto"],
+            },
             marca: {
               type: "string",
             },
@@ -151,6 +154,14 @@ module.exports = swaggerJsdoc({
       },
       {
         name: "Pagos",
+      },
+      {
+        name: "Usuarios",
+        description: "Gestión administrativa de cuentas y roles",
+      },
+      {
+        name: "Estadísticas",
+        description: "Indicadores del dashboard",
       },
       {
         name: "Seguridad",

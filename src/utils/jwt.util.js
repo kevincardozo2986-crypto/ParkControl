@@ -5,61 +5,45 @@ const jwt = require("jsonwebtoken");
 // ========================================
 const obtenerConfiguracionJWT = () => {
   const secret = process.env.JWT_SECRET;
-  const expiresIn =
-    process.env.JWT_EXPIRES_IN || "1h";
+  const expiresIn = process.env.JWT_EXPIRES_IN || "1h";
 
   if (!secret) {
-    throw new Error(
-      "JWT_SECRET no está configurado"
-    );
+    throw new Error("JWT_SECRET no está configurado");
   }
 
-  return {
-    secret,
-    expiresIn,
-  };
+  return { secret, expiresIn };
 };
 
 // ========================================
 // Generar JWT
+// vs = version_sesion: si la contraseña cambia o la cuenta
+// se desactiva, los tokens anteriores dejan de ser válidos.
 // ========================================
 const generarToken = (usuario) => {
-  const {
-    secret,
-    expiresIn,
-  } = obtenerConfiguracionJWT();
+  const { secret, expiresIn } = obtenerConfiguracionJWT();
 
   const payload = {
     email: usuario.email,
     rol: usuario.rol,
+    vs: usuario.versionSesion,
   };
 
-  return jwt.sign(
-    payload,
-    secret,
-    {
-      algorithm: "HS256",
-      subject: String(usuario.id),
-      expiresIn,
-    }
-  );
+  return jwt.sign(payload, secret, {
+    algorithm: "HS256",
+    subject: String(usuario.id),
+    expiresIn,
+  });
 };
 
 // ========================================
 // Verificar JWT
 // ========================================
 const verificarToken = (token) => {
-  const {
-    secret,
-  } = obtenerConfiguracionJWT();
+  const { secret } = obtenerConfiguracionJWT();
 
-  return jwt.verify(
-    token,
-    secret,
-    {
-      algorithms: ["HS256"],
-    }
-  );
+  return jwt.verify(token, secret, {
+    algorithms: ["HS256"],
+  });
 };
 
 module.exports = {

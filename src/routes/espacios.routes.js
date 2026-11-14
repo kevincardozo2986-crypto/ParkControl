@@ -15,8 +15,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Listar espacios
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200': { description: Lista de espacios }
  *       '401': { description: No autenticado }
@@ -25,8 +24,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Crear espacio (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -49,8 +47,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Listar espacios disponibles
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200': { description: Espacios disponibles }
  *       '401': { description: No autenticado }
@@ -60,8 +57,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Consultar espacio por ID
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -74,8 +70,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Actualizar espacio (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -99,8 +94,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Actualizar parcialmente espacio (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -124,8 +118,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Espacios]
  *     summary: Eliminar espacio (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -141,21 +134,21 @@ const autorizarRoles = require("../middlewares/roles.middleware");
 r.get(
   "/",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.todos
 );
 
 r.get(
   "/disponibles",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.disponibles
 );
 
 r.get(
   "/:id",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   v.id,
   validar,
   c.porId

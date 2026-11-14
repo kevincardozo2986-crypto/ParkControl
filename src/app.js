@@ -21,6 +21,45 @@ const {
 } = require("./middlewares/errores.middleware");
 
 // ========================================
+// Clasificación de rutas /api
+// ========================================
+const RECURSOS_JWT = new Set([
+  "conductores",
+  "vehiculos",
+  "espacios",
+  "estancias",
+  "pagos",
+  "usuarios",
+  "estadisticas",
+]);
+
+const AUTH_JWT = new Set([
+  "perfil",
+  "cambiar-password",
+  "recuperacion",
+  "codigos-recuperacion",
+]);
+
+const AUTH_PUBLICAS = new Set([
+  "POST /login",
+  "POST /restablecer-password",
+  "POST /restablecer-con-codigo",
+]);
+
+// req.path es relativo a /api (p. ej. /estancias/3/salida)
+const esRutaWebJWT = (req) => {
+  const [, primero, segundo] = req.path.split("/");
+
+  if (RECURSOS_JWT.has(primero)) return true;
+
+  return primero === "auth" && AUTH_JWT.has(segundo);
+};
+
+const esRutaPublica = (req) =>
+  req.path.startsWith("/auth/") &&
+  AUTH_PUBLICAS.has(`${req.method} ${req.path.slice("/auth".length)}`);
+
+// ========================================
 // Crear aplicación
 // ========================================
 function createApp() {
@@ -36,10 +75,22 @@ function createApp() {
   // Request ID
   app.use(requestId);
 
-  // Helmet
+  // Helmet con CSP compatible con Swagger UI (scripts solo propios).
+  // upgrade-insecure-requests se omite para poder usar http://localhost.
   app.use(
     helmet({
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          "script-src": ["'self'"],
+          "style-src": ["'self'", "'unsafe-inline'"],
+          "img-src": ["'self'", "data:"],
+          "font-src": ["'self'", "data:"],
+          "connect-src": ["'self'"],
+          "frame-ancestors": ["'none'"],
+          "upgrade-insecure-requests": null,
+        },
+      },
     }),
   );
 
@@ -60,9 +111,16 @@ function createApp() {
         return cb(err);
       },
 
-      methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 
-      allowedHeaders: ["Content-Type", "X-API-Key", "X-Request-Id"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "X-API-Key",
+        "X-Request-Id",
+      ],
+
+      exposedHeaders: ["Retry-After", "X-Request-Id"],
     }),
   );
 
@@ -119,7 +177,10 @@ function createApp() {
     "/api",
     rateLimit({
       windowMs: 15 * 60 * 1000,
-      limit: 100,
+      // RATE_LIMIT_MAX permite ajustar el límite (p. ej. durante un escaneo DAST controlado)
+      limit: Number(process.env.RATE_LIMIT_MAX) || 300,
+      // El login tiene su propio limitador (auth.routes.js)
+      skip: (req) => req.path === "/auth/login",
       standardHeaders: "draft-8",
       legacyHeaders: false,
 
@@ -133,11 +194,19 @@ function createApp() {
   );
 
   // ========================================
-  // Protección mediante API Key
+  // Clientes web (JWT) y clientes privados (API Key)
   // ========================================
-  // Todas las rutas /api pasan primero
-  // por el middleware de autenticación.
-  app.use("/api", validarApiKey);
+  // El navegador NUNCA debe contener una API Key privada.
+  // - Recursos y cuenta propia: JWT + RBAC en sus routers.
+  // - Login y recuperación pública: sin credencial, con rate limit.
+  // - /api/seguridad e integraciones privadas: API Key.
+  app.use("/api", (req, res, next) => {
+    if (esRutaWebJWT(req) || esRutaPublica(req)) {
+      return next();
+    }
+
+    return validarApiKey(req, res, next);
+  });
 
   // ========================================
   // Rutas ParkControl
@@ -152,8 +221,12 @@ function createApp() {
 
   app.use("/api/pagos", require("./routes/pagos.routes"));
 
+  app.use("/api/usuarios", require("./routes/usuarios.routes"));
+
+  app.use("/api/estadisticas", require("./routes/estadisticas.routes"));
+
   app.use("/api/seguridad", require("./routes/seguridad.routes"));
-  
+
   app.use("/api/auth", require("./routes/auth.routes"));
 
   // ========================================
@@ -168,33 +241,24 @@ function createApp() {
 // ========================================
 // Iniciar servidor
 // ========================================
-
-const usuariosService = require("./services/usuarios.service");
-
-// ========================================
-// Iniciar servidor con administrador
-// ========================================
-const iniciarServidor = async () => {
+// No se crean usuarios ni administradores durante el arranque:
+// la cuenta inicial se crea con `npm run seed:admin`.
+const iniciarServidor = () => {
   try {
     const config = loadConfig();
 
-    await usuariosService.crearAdministradorInicial();
+    const servidor = createApp().listen(config.port, () => {
+      console.log(`Servidor ejecutándose en http://localhost:${config.port}`);
+      console.log(`Swagger UI: http://localhost:${config.port}/api-docs`);
+      console.log(`OpenAPI JSON: http://localhost:${config.port}/openapi.json`);
+    });
 
-    createApp().listen(config.port, () => {
-      console.log(
-        `Servidor: http://localhost:${config.port}`
-      );
-
-      console.log(
-        `Swagger: http://localhost:${config.port}/api-docs`
-      );
+    servidor.on("error", (error) => {
+      console.error("Error al iniciar servidor:", error.message);
+      process.exitCode = 1;
     });
   } catch (error) {
-    console.error(
-      "Error al iniciar el servidor:",
-      error.message
-    );
-
+    console.error("Error al iniciar el servidor:", error.message);
     process.exit(1);
   }
 };

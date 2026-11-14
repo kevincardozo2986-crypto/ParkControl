@@ -1,0 +1,91 @@
+       tablename       | rowsecurity 
+-----------------------+-------------
+ codigos_recuperacion  | t
+ conductores           | t
+ espacios              | t
+ estancias             | t
+ pagos                 | t
+ password_reset_tokens | t
+ roles                 | t
+ usuarios              | t
+ vehiculos             | t
+(9 filas)
+
+ tablename | policyname | roles | cmd | qual 
+-----------+------------+-------+-----+------
+(0 filas)
+
+       tablename       |              indexname               |                                                                indexdef                                                                
+-----------------------+--------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------
+ codigos_recuperacion  | codigos_recuperacion_codigo_hash_key | CREATE UNIQUE INDEX codigos_recuperacion_codigo_hash_key ON public.codigos_recuperacion USING btree (codigo_hash)
+ codigos_recuperacion  | codigos_recuperacion_pkey            | CREATE UNIQUE INDEX codigos_recuperacion_pkey ON public.codigos_recuperacion USING btree (id)
+ codigos_recuperacion  | idx_codigos_recuperacion_usuario     | CREATE INDEX idx_codigos_recuperacion_usuario ON public.codigos_recuperacion USING btree (usuario_id)
+ conductores           | conductores_documento_key            | CREATE UNIQUE INDEX conductores_documento_key ON public.conductores USING btree (documento)
+ conductores           | conductores_pkey                     | CREATE UNIQUE INDEX conductores_pkey ON public.conductores USING btree (id)
+ conductores           | conductores_usuario_id_key           | CREATE UNIQUE INDEX conductores_usuario_id_key ON public.conductores USING btree (usuario_id)
+ espacios              | espacios_numero_key                  | CREATE UNIQUE INDEX espacios_numero_key ON public.espacios USING btree (numero)
+ espacios              | espacios_pkey                        | CREATE UNIQUE INDEX espacios_pkey ON public.espacios USING btree (id)
+ espacios              | idx_espacios_numero                  | CREATE UNIQUE INDEX idx_espacios_numero ON public.espacios USING btree (lower((numero)::text))
+ estancias             | estancias_pkey                       | CREATE UNIQUE INDEX estancias_pkey ON public.estancias USING btree (id)
+ estancias             | idx_estancia_espacio_activo          | CREATE UNIQUE INDEX idx_estancia_espacio_activo ON public.estancias USING btree (espacio_id) WHERE ((estado)::text = 'activa'::text)
+ estancias             | idx_estancia_vehiculo_activo         | CREATE UNIQUE INDEX idx_estancia_vehiculo_activo ON public.estancias USING btree (vehiculo_id) WHERE ((estado)::text = 'activa'::text)
+ estancias             | idx_estancias_espacio                | CREATE INDEX idx_estancias_espacio ON public.estancias USING btree (espacio_id)
+ estancias             | idx_estancias_estado                 | CREATE INDEX idx_estancias_estado ON public.estancias USING btree (estado)
+ estancias             | idx_estancias_fecha_entrada          | CREATE INDEX idx_estancias_fecha_entrada ON public.estancias USING btree (fecha_hora_entrada DESC)
+ estancias             | idx_estancias_vehiculo               | CREATE INDEX idx_estancias_vehiculo ON public.estancias USING btree (vehiculo_id)
+ pagos                 | idx_pagos_fecha                      | CREATE INDEX idx_pagos_fecha ON public.pagos USING btree (fecha_pago DESC)
+ pagos                 | pagos_estancia_id_key                | CREATE UNIQUE INDEX pagos_estancia_id_key ON public.pagos USING btree (estancia_id)
+ pagos                 | pagos_pkey                           | CREATE UNIQUE INDEX pagos_pkey ON public.pagos USING btree (id)
+ password_reset_tokens | idx_reset_expiracion                 | CREATE INDEX idx_reset_expiracion ON public.password_reset_tokens USING btree (fecha_expiracion)
+ password_reset_tokens | idx_reset_usuario                    | CREATE INDEX idx_reset_usuario ON public.password_reset_tokens USING btree (usuario_id)
+ password_reset_tokens | password_reset_tokens_pkey           | CREATE UNIQUE INDEX password_reset_tokens_pkey ON public.password_reset_tokens USING btree (id)
+ password_reset_tokens | password_reset_tokens_token_hash_key | CREATE UNIQUE INDEX password_reset_tokens_token_hash_key ON public.password_reset_tokens USING btree (token_hash)
+ roles                 | roles_nombre_key                     | CREATE UNIQUE INDEX roles_nombre_key ON public.roles USING btree (nombre)
+ roles                 | roles_pkey                           | CREATE UNIQUE INDEX roles_pkey ON public.roles USING btree (id)
+ usuarios              | idx_usuarios_email                   | CREATE UNIQUE INDEX idx_usuarios_email ON public.usuarios USING btree (lower((email)::text))
+ usuarios              | usuarios_pkey                        | CREATE UNIQUE INDEX usuarios_pkey ON public.usuarios USING btree (id)
+ vehiculos             | idx_vehiculos_conductor              | CREATE INDEX idx_vehiculos_conductor ON public.vehiculos USING btree (conductor_id)
+ vehiculos             | vehiculos_pkey                       | CREATE UNIQUE INDEX vehiculos_pkey ON public.vehiculos USING btree (id)
+ vehiculos             | vehiculos_placa_key                  | CREATE UNIQUE INDEX vehiculos_placa_key ON public.vehiculos USING btree (placa)
+(30 filas)
+
+      table_name       |   column_name    | tabla_referenciada | columna_referenciada 
+-----------------------+------------------+--------------------+----------------------
+ codigos_recuperacion  | usuario_id       | usuarios           | id
+ conductores           | usuario_id       | usuarios           | id
+ estancias             | espacio_id       | espacios           | id
+ estancias             | vehiculo_id      | vehiculos          | id
+ pagos                 | estancia_id      | estancias          | id
+ password_reset_tokens | administrador_id | usuarios           | id
+ password_reset_tokens | usuario_id       | usuarios           | id
+ usuarios              | rol_id           | roles              | id
+ vehiculos             | conductor_id     | conductores        | id
+(9 filas)
+
+ current_user | session_user | row_security | bypassrls 
+--------------+--------------+--------------+-----------
+ postgres     | postgres     | on           | t
+(1 fila)
+
+ id |    nombre     | activo 
+----+---------------+--------
+  1 | administrador | t
+  2 | operador      | t
+  3 | conductor     | t
+(3 filas)
+
+ table_name | grantee | privilege_type 
+------------+---------+----------------
+(0 filas)
+
+    tabla    | count 
+-------------+-------
+ roles       |     3
+ usuarios    |     0
+ conductores |     2
+ vehiculos   |     2
+ espacios    |     5
+ estancias   |     0
+ pagos       |     0
+(7 filas)
+

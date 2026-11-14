@@ -15,8 +15,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Estancias]
  *     summary: Listar todas las estancias
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200': { description: Lista de estancias }
  *       '401': { description: No autenticado }
@@ -27,8 +26,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Estancias]
  *     summary: Listar estancias activas
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200': { description: Estancias activas }
  *       '401': { description: No autenticado }
@@ -38,8 +36,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Estancias]
  *     summary: Registrar entrada (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -66,8 +63,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Estancias]
  *     summary: Consultar estancia por ID
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -82,8 +78,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     tags: [Estancias]
  *     summary: Registrar salida (solo administrador)
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -102,21 +97,21 @@ const autorizarRoles = require("../middlewares/roles.middleware");
 r.get(
   "/",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.todos
 );
 
 r.get(
   "/activas",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.activas
 );
 
 r.get(
   "/:id",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   v.id,
   validar,
   c.porId
@@ -126,7 +121,7 @@ r.get(
 r.post(
   "/entrada",
   autenticarJWT,
-  autorizarRoles("administrador"),
+  autorizarRoles("administrador", "operador"),
   v.entrada,
   validar,
   c.entrada
@@ -135,7 +130,7 @@ r.post(
 r.patch(
   "/:id/salida",
   autenticarJWT,
-  autorizarRoles("administrador"),
+  autorizarRoles("administrador", "operador"),
   v.id,
   validar,
   c.salida

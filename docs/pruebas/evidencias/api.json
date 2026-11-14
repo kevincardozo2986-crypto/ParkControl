@@ -1,0 +1,727 @@
+{
+  "fecha": "2026-11-11T18:36:31.148Z",
+  "total": 72,
+  "aprobadas": 72,
+  "resultados": [
+    {
+      "id": "AUT-01",
+      "categoria": "Autenticación",
+      "rol": "administrador",
+      "peticion": "POST /api/auth/login",
+      "esperado": "200",
+      "obtenido": "200 Autenticación correcta",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-02",
+      "categoria": "Autenticación",
+      "rol": "—",
+      "peticion": "POST /api/auth/login (clave errada)",
+      "esperado": "401",
+      "obtenido": "401 Credenciales inválidas",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-03",
+      "categoria": "Autenticación",
+      "rol": "—",
+      "peticion": "POST /api/auth/login (correo inexistente)",
+      "esperado": "401",
+      "obtenido": "401 Credenciales inválidas",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-04",
+      "categoria": "Autenticación",
+      "rol": "—",
+      "peticion": "GET /api/estancias (sin token)",
+      "esperado": "401",
+      "obtenido": "401 Token de autenticación requerido",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-05",
+      "categoria": "Autenticación",
+      "rol": "conductor",
+      "peticion": "GET /api/usuarios (JWT con rol alterado)",
+      "esperado": "401",
+      "obtenido": "401 Token inválido",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-06",
+      "categoria": "Autenticación",
+      "rol": "administrador",
+      "peticion": "GET /api/usuarios (JWT expirado)",
+      "esperado": "401",
+      "obtenido": "401 Token expirado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-07",
+      "categoria": "Autenticación",
+      "rol": "—",
+      "peticion": "GET /api/usuarios (JWT alg=none)",
+      "esperado": "401",
+      "obtenido": "401 Token inválido",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-08",
+      "categoria": "Autenticación",
+      "rol": "—",
+      "peticion": "GET /api/estancias (formato Token xyz)",
+      "esperado": "401",
+      "obtenido": "401 Formato de token inválido",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-09",
+      "categoria": "Autenticación",
+      "rol": "conductor",
+      "peticion": "GET /api/auth/perfil",
+      "esperado": "200",
+      "obtenido": "200 Usuario autenticado mediante JWT",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "KEY-01",
+      "categoria": "API Key",
+      "rol": "—",
+      "peticion": "POST /api/auth/registro (sin API Key)",
+      "esperado": "401",
+      "obtenido": "401 API Key requerida",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "KEY-02",
+      "categoria": "API Key",
+      "rol": "—",
+      "peticion": "POST /api/auth/registro (API Key inválida)",
+      "esperado": "401",
+      "obtenido": "401 API Key inválida",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "KEY-03",
+      "categoria": "API Key",
+      "rol": "cliente Postman",
+      "peticion": "POST /api/auth/registro (envía rol=administrador)",
+      "esperado": "201",
+      "obtenido": "201 Usuario registrado correctamente",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "KEY-04",
+      "categoria": "API Key",
+      "rol": "cliente Postman",
+      "peticion": "GET /api/seguridad/cliente",
+      "esperado": "200",
+      "obtenido": "200 Cliente autenticado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-01",
+      "categoria": "RBAC",
+      "rol": "conductor",
+      "peticion": "GET /api/vehiculos (listado global)",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-02",
+      "categoria": "RBAC",
+      "rol": "conductor",
+      "peticion": "POST /api/estancias/entrada",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-03",
+      "categoria": "RBAC",
+      "rol": "conductor",
+      "peticion": "GET /api/estadisticas/resumen",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-04",
+      "categoria": "RBAC",
+      "rol": "operador",
+      "peticion": "POST /api/usuarios",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-05",
+      "categoria": "RBAC",
+      "rol": "operador",
+      "peticion": "POST /api/conductores",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-06",
+      "categoria": "RBAC",
+      "rol": "operador",
+      "peticion": "DELETE /api/espacios/2",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-07",
+      "categoria": "RBAC",
+      "rol": "operador",
+      "peticion": "GET /api/estadisticas/resumen",
+      "esperado": "200",
+      "obtenido": "200 resumen, ingresosPorMes",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "RBAC-08",
+      "categoria": "RBAC",
+      "rol": "administrador",
+      "peticion": "GET /api/usuarios",
+      "esperado": "200",
+      "obtenido": "200 usuarios, total, pagina, porPagina",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-01",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/vehiculos/mis-vehiculos",
+      "esperado": "200",
+      "obtenido": "200 lista (1)",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-02",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/vehiculos/1 (propio)",
+      "esperado": "200",
+      "obtenido": "200 id, placa, tipo, marca, color, conductorId",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-03",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/vehiculos/2 (ajeno)",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para acceder a este recurso",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-04",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/conductores/2 (ficha ajena)",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para acceder a este recurso",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-05",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/conductores/mi-ficha",
+      "esperado": "200",
+      "obtenido": "200 id, nombre, documento, telefono, correo, usuarioId",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-06",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor sin ficha",
+      "peticion": "GET /api/vehiculos/mis-vehiculos",
+      "esperado": "404",
+      "obtenido": "404 La cuenta no tiene una ficha de conductor vinculada",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-07",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor sin ficha",
+      "peticion": "GET /api/vehiculos/1",
+      "esperado": "403",
+      "obtenido": "403 La cuenta no tiene una ficha de conductor vinculada",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-01",
+      "categoria": "Negocio",
+      "rol": "conductor",
+      "peticion": "GET /api/espacios (disponibilidad)",
+      "esperado": "200",
+      "obtenido": "200 lista (5)",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-02",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/estancias/entrada (carro en espacio libre)",
+      "esperado": "201",
+      "obtenido": "201 Entrada registrada correctamente",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-03",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/estancias/entrada (mismo vehículo otra vez)",
+      "esperado": "409",
+      "obtenido": "409 El vehículo ya tiene una estancia activa",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-04",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/estancias/entrada (espacio ocupado)",
+      "esperado": "409",
+      "obtenido": "409 El espacio está ocupado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-05",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/estancias/entrada (moto en celda de carro)",
+      "esperado": "409",
+      "obtenido": "409 El tipo de espacio no es compatible con el vehículo",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-06",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/pagos (estancia aún activa)",
+      "esperado": "409",
+      "obtenido": "409 La estancia debe estar finalizada antes de pagar",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-08",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/estancias/1 (propia)",
+      "esperado": "200",
+      "obtenido": "200 id, vehiculoId, espacioId, fechaHoraEntrada, fechaHoraSalida, estado, tiempoPerm",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-09",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor (otro)",
+      "peticion": "GET /api/estancias/1 (ajena)",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para acceder a este recurso",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-07",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "PATCH /api/estancias/1/salida",
+      "esperado": "200",
+      "obtenido": "200 Operación realizada correctamente",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-08",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "PATCH /api/estancias/1/salida (repetida)",
+      "esperado": "409",
+      "obtenido": "409 La estancia no está activa",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-09",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/pagos (estancia finalizada)",
+      "esperado": "201",
+      "obtenido": "201 Pago registrado correctamente",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-10",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "POST /api/pagos (misma estancia)",
+      "esperado": "409",
+      "obtenido": "409 La estancia ya tiene un pago registrado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-10",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor (otro)",
+      "peticion": "GET /api/pagos/1 (ajeno)",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para acceder a este recurso",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "BOLA-11",
+      "categoria": "BOLA/IDOR",
+      "rol": "conductor",
+      "peticion": "GET /api/pagos/mis-pagos",
+      "esperado": "200",
+      "obtenido": "200 lista (1)",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "NEG-11",
+      "categoria": "Negocio",
+      "rol": "operador",
+      "peticion": "5 × POST /api/estancias/entrada simultáneos (mismo vehículo)",
+      "esperado": "1×201, 4×409",
+      "obtenido": "201, 409, 409, 409, 409 (212 ms)",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-01",
+      "categoria": "Validación",
+      "rol": "administrador",
+      "peticion": "POST /api/vehiculos (placa \"A\")",
+      "esperado": "400",
+      "obtenido": "400 Datos inválidos — La placa debe tener entre 5 y 7 caracteres alfanuméricos",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-02",
+      "categoria": "Validación",
+      "rol": "administrador",
+      "peticion": "GET /api/vehiculos/1 OR 1=1 (inyección SQL en ID)",
+      "esperado": "400",
+      "obtenido": "400 Datos inválidos — ID inválido",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-03",
+      "categoria": "Validación",
+      "rol": "administrador",
+      "peticion": "GET /api/usuarios?q=' OR '1'='1",
+      "esperado": "200",
+      "obtenido": "200 usuarios, total, pagina, porPagina",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-04",
+      "categoria": "Validación",
+      "rol": "administrador",
+      "peticion": "POST /api/espacios (asignación masiva estado=ocupado)",
+      "esperado": "201",
+      "obtenido": "201 Operación realizada correctamente",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-05",
+      "categoria": "Validación",
+      "rol": "administrador",
+      "peticion": "POST /api/conductores (cuerpo > 10 KB)",
+      "esperado": "413",
+      "obtenido": "413 El cuerpo de la solicitud supera el tamaño permitido (10 KB)",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-06",
+      "categoria": "Validación",
+      "rol": "administrador",
+      "peticion": "POST /api/conductores (JSON mal formado)",
+      "esperado": "400",
+      "obtenido": "400 El cuerpo de la solicitud no es un JSON válido",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "VAL-07",
+      "categoria": "Validación",
+      "rol": "—",
+      "peticion": "POST /api/auth/registro (contraseña débil)",
+      "esperado": "400",
+      "obtenido": "400 Datos inválidos — La contraseña debe tener entre 12 y 72 caracteres",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "CTA-01",
+      "categoria": "Cuentas",
+      "rol": "administrador",
+      "peticion": "PATCH /api/usuarios/{propio}/estado {activo:false}",
+      "esperado": "409",
+      "obtenido": "409 No puede desactivar su propia cuenta",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "CTA-02",
+      "categoria": "Cuentas",
+      "rol": "administrador",
+      "peticion": "PATCH /api/conductores/1/cuenta (cuenta de operador)",
+      "esperado": "400",
+      "obtenido": "400 Solo se pueden vincular cuentas con rol conductor",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "CTA-03",
+      "categoria": "Cuentas",
+      "rol": "administrador",
+      "peticion": "PATCH /api/conductores/2/cuenta (cuenta ya vinculada)",
+      "esperado": "409",
+      "obtenido": "409 La cuenta ya está vinculada a otro conductor",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "SES-01",
+      "categoria": "Sesión",
+      "rol": "conductor",
+      "peticion": "PATCH /api/auth/cambiar-password",
+      "esperado": "200",
+      "obtenido": "200 Contraseña actualizada. Inicie sesión nuevamente.",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "SES-02",
+      "categoria": "Sesión",
+      "rol": "conductor",
+      "peticion": "GET /api/auth/perfil (token anterior al cambio)",
+      "esperado": "401",
+      "obtenido": "401 Sesión revocada",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "SES-03",
+      "categoria": "Sesión",
+      "rol": "conductor",
+      "peticion": "POST /api/auth/login (contraseña anterior)",
+      "esperado": "401",
+      "obtenido": "401 Credenciales inválidas",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "SES-04",
+      "categoria": "Sesión",
+      "rol": "conductor",
+      "peticion": "POST /api/auth/login (contraseña nueva)",
+      "esperado": "200",
+      "obtenido": "200 Autenticación correcta",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "SES-05",
+      "categoria": "Sesión",
+      "rol": "administrador",
+      "peticion": "PATCH /api/usuarios/4/estado {activo:false}",
+      "esperado": "200",
+      "obtenido": "200 Estado actualizado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "SES-06",
+      "categoria": "Sesión",
+      "rol": "conductor (desactivado)",
+      "peticion": "GET /api/vehiculos/mis-vehiculos",
+      "esperado": "403",
+      "obtenido": "403 Usuario deshabilitado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-01",
+      "categoria": "Recuperación",
+      "rol": "conductor",
+      "peticion": "POST /api/auth/codigos-recuperacion",
+      "esperado": "201",
+      "obtenido": "201 Guarde estos códigos. No se mostrarán nuevamente.",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-02",
+      "categoria": "Recuperación",
+      "rol": "conductor",
+      "peticion": "POST /api/auth/codigos-recuperacion (contraseña errada)",
+      "esperado": "401",
+      "obtenido": "401 Reautenticación incorrecta",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-03",
+      "categoria": "Recuperación",
+      "rol": "—",
+      "peticion": "POST /api/auth/restablecer-con-codigo",
+      "esperado": "200",
+      "obtenido": "200 Contraseña restablecida. Inicie sesión nuevamente.",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-04",
+      "categoria": "Recuperación",
+      "rol": "—",
+      "peticion": "POST /api/auth/restablecer-con-codigo (código reutilizado)",
+      "esperado": "400",
+      "obtenido": "400 Código o cuenta inválidos",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-05",
+      "categoria": "Recuperación",
+      "rol": "operador",
+      "peticion": "POST /api/auth/recuperacion/admin/3",
+      "esperado": "403",
+      "obtenido": "403 No tiene permisos para realizar esta operación",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-06",
+      "categoria": "Recuperación",
+      "rol": "administrador",
+      "peticion": "POST /api/auth/recuperacion/admin/2",
+      "esperado": "201",
+      "obtenido": "201 Token generado. Entréguelo únicamente al titular verificado.",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-07",
+      "categoria": "Recuperación",
+      "rol": "—",
+      "peticion": "POST /api/auth/restablecer-password (token admin)",
+      "esperado": "200",
+      "obtenido": "200 Contraseña restablecida. Inicie sesión nuevamente.",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-08",
+      "categoria": "Recuperación",
+      "rol": "—",
+      "peticion": "POST /api/auth/restablecer-password (token reutilizado)",
+      "esperado": "400",
+      "obtenido": "400 Token inválido, utilizado o expirado",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "REC-09",
+      "categoria": "Recuperación",
+      "rol": "operador",
+      "peticion": "GET /api/estancias (token emitido antes del restablecimiento)",
+      "esperado": "401",
+      "obtenido": "401 Sesión revocada",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "HDR-01",
+      "categoria": "Cabeceras/CORS",
+      "rol": "—",
+      "peticion": "GET /api/estancias (Origin: http://evil.test)",
+      "esperado": "403",
+      "obtenido": "403 Origen no permitido por CORS",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "HDR-02",
+      "categoria": "Cabeceras/CORS",
+      "rol": "—",
+      "peticion": "GET /health (cabeceras de seguridad)",
+      "esperado": "200",
+      "obtenido": "200 status, timestamp",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "HDR-03",
+      "categoria": "Cabeceras/CORS",
+      "rol": "—",
+      "peticion": "OPTIONS /api/estancias (preflight desde localhost:5173)",
+      "esperado": "204",
+      "obtenido": "204 allow-origin: http://localhost:5173",
+      "ok": true,
+      "nota": ""
+    },
+    {
+      "id": "AUT-10",
+      "categoria": "Autenticación",
+      "rol": "—",
+      "peticion": "11 × POST /api/auth/login con clave errada",
+      "esperado": "401… luego 429",
+      "obtenido": "401, 401, 401, 401, 401, 401, 401, 429, 429, 429, 429",
+      "ok": true,
+      "nota": ""
+    }
+  ]
+}

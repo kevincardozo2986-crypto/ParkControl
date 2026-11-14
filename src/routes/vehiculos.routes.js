@@ -20,8 +20,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Listar vehículos
  *     description: Disponible para administradores y usuarios autenticados.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: Lista de vehículos
@@ -36,8 +35,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Registrar vehículo
  *     description: Solo administradores pueden registrar vehículos.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -88,8 +86,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *       - Vehículos
  *     summary: Consultar vehículo por ID
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -112,8 +109,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Actualizar vehículo completamente
  *     description: Solo administradores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -166,8 +162,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Actualizar parcialmente un vehículo
  *     description: Solo administradores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -214,8 +209,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Eliminar vehículo
  *     description: Solo administradores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -241,7 +235,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
 r.get(
   "/",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.todos
 );
 
@@ -251,7 +245,7 @@ r.get(
 r.get(
   "/:id",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   v.id,
   validar,
   c.porId

@@ -1,0 +1,74 @@
+OK   AUT-01 POST /api/auth/login -> 200 Autenticación correcta
+OK   AUT-02 POST /api/auth/login (clave errada) -> 401 Credenciales inválidas
+OK   AUT-03 POST /api/auth/login (correo inexistente) -> 401 Credenciales inválidas
+OK   AUT-04 GET /api/estancias (sin token) -> 401 Token de autenticación requerido
+OK   AUT-05 GET /api/usuarios (JWT con rol alterado) -> 401 Token inválido
+OK   AUT-06 GET /api/usuarios (JWT expirado) -> 401 Token expirado
+OK   AUT-07 GET /api/usuarios (JWT alg=none) -> 401 Token inválido
+OK   AUT-08 GET /api/estancias (formato Token xyz) -> 401 Formato de token inválido
+OK   AUT-09 GET /api/auth/perfil -> 200 Usuario autenticado mediante JWT
+OK   KEY-01 POST /api/auth/registro (sin API Key) -> 401 API Key requerida
+OK   KEY-02 POST /api/auth/registro (API Key inválida) -> 401 API Key inválida
+OK   KEY-03 POST /api/auth/registro (envía rol=administrador) -> 201 Usuario registrado correctamente
+OK   KEY-04 GET /api/seguridad/cliente -> 200 Cliente autenticado
+OK   RBAC-01 GET /api/vehiculos (listado global) -> 403 No tiene permisos para realizar esta operación
+OK   RBAC-02 POST /api/estancias/entrada -> 403 No tiene permisos para realizar esta operación
+OK   RBAC-03 GET /api/estadisticas/resumen -> 403 No tiene permisos para realizar esta operación
+OK   RBAC-04 POST /api/usuarios -> 403 No tiene permisos para realizar esta operación
+OK   RBAC-05 POST /api/conductores -> 403 No tiene permisos para realizar esta operación
+OK   RBAC-06 DELETE /api/espacios/2 -> 403 No tiene permisos para realizar esta operación
+OK   RBAC-07 GET /api/estadisticas/resumen -> 200 resumen, ingresosPorMes
+OK   RBAC-08 GET /api/usuarios -> 200 usuarios, total, pagina, porPagina
+OK   BOLA-01 GET /api/vehiculos/mis-vehiculos -> 200 lista (1)
+OK   BOLA-02 GET /api/vehiculos/1 (propio) -> 200 id, placa, tipo, marca, color, conductorId
+OK   BOLA-03 GET /api/vehiculos/2 (ajeno) -> 403 No tiene permisos para acceder a este recurso
+OK   BOLA-04 GET /api/conductores/2 (ficha ajena) -> 403 No tiene permisos para acceder a este recurso
+OK   BOLA-05 GET /api/conductores/mi-ficha -> 200 id, nombre, documento, telefono, correo, usuarioId
+OK   BOLA-06 GET /api/vehiculos/mis-vehiculos -> 404 La cuenta no tiene una ficha de conductor vinculada
+OK   BOLA-07 GET /api/vehiculos/1 -> 403 La cuenta no tiene una ficha de conductor vinculada
+OK   NEG-01 GET /api/espacios (disponibilidad) -> 200 lista (5)
+OK   NEG-02 POST /api/estancias/entrada (carro en espacio libre) -> 201 Entrada registrada correctamente
+OK   NEG-03 POST /api/estancias/entrada (mismo vehículo otra vez) -> 409 El vehículo ya tiene una estancia activa
+OK   NEG-04 POST /api/estancias/entrada (espacio ocupado) -> 409 El espacio está ocupado
+OK   NEG-05 POST /api/estancias/entrada (moto en celda de carro) -> 409 El tipo de espacio no es compatible con el vehículo
+OK   NEG-06 POST /api/pagos (estancia aún activa) -> 409 La estancia debe estar finalizada antes de pagar
+OK   BOLA-08 GET /api/estancias/1 (propia) -> 200 id, vehiculoId, espacioId, fechaHoraEntrada, fechaHoraSalida, estado, tiempoPerm
+OK   BOLA-09 GET /api/estancias/1 (ajena) -> 403 No tiene permisos para acceder a este recurso
+OK   NEG-07 PATCH /api/estancias/1/salida -> 200 Operación realizada correctamente
+OK   NEG-08 PATCH /api/estancias/1/salida (repetida) -> 409 La estancia no está activa
+OK   NEG-09 POST /api/pagos (estancia finalizada) -> 201 Pago registrado correctamente
+OK   NEG-10 POST /api/pagos (misma estancia) -> 409 La estancia ya tiene un pago registrado
+OK   BOLA-10 GET /api/pagos/1 (ajeno) -> 403 No tiene permisos para acceder a este recurso
+OK   BOLA-11 GET /api/pagos/mis-pagos -> 200 lista (1)
+OK   NEG-11 concurrencia -> 201,409,409,409,409
+OK   VAL-01 POST /api/vehiculos (placa "A") -> 400 Datos inválidos — La placa debe tener entre 5 y 7 caracteres alfanuméricos
+OK   VAL-02 GET /api/vehiculos/1 OR 1=1 (inyección SQL en ID) -> 400 Datos inválidos — ID inválido
+OK   VAL-03 GET /api/usuarios?q=' OR '1'='1 -> 200 usuarios, total, pagina, porPagina
+OK   VAL-04 POST /api/espacios (asignación masiva estado=ocupado) -> 201 Operación realizada correctamente
+OK   VAL-05 POST /api/conductores (cuerpo > 10 KB) -> 413 El cuerpo de la solicitud supera el tamaño permitido (10 KB)
+OK   VAL-06 POST /api/conductores (JSON mal formado) -> 400 El cuerpo de la solicitud no es un JSON válido
+OK   VAL-07 POST /api/auth/registro (contraseña débil) -> 400 Datos inválidos — La contraseña debe tener entre 12 y 72 caracteres
+OK   CTA-01 PATCH /api/usuarios/{propio}/estado {activo:false} -> 409 No puede desactivar su propia cuenta
+OK   CTA-02 PATCH /api/conductores/1/cuenta (cuenta de operador) -> 400 Solo se pueden vincular cuentas con rol conductor
+OK   CTA-03 PATCH /api/conductores/2/cuenta (cuenta ya vinculada) -> 409 La cuenta ya está vinculada a otro conductor
+OK   SES-01 PATCH /api/auth/cambiar-password -> 200 Contraseña actualizada. Inicie sesión nuevamente.
+OK   SES-02 GET /api/auth/perfil (token anterior al cambio) -> 401 Sesión revocada
+OK   SES-03 POST /api/auth/login (contraseña anterior) -> 401 Credenciales inválidas
+OK   SES-04 POST /api/auth/login (contraseña nueva) -> 200 Autenticación correcta
+OK   SES-05 PATCH /api/usuarios/4/estado {activo:false} -> 200 Estado actualizado
+OK   SES-06 GET /api/vehiculos/mis-vehiculos -> 403 Usuario deshabilitado
+OK   REC-01 POST /api/auth/codigos-recuperacion -> 201 Guarde estos códigos. No se mostrarán nuevamente.
+OK   REC-02 POST /api/auth/codigos-recuperacion (contraseña errada) -> 401 Reautenticación incorrecta
+OK   REC-03 POST /api/auth/restablecer-con-codigo -> 200 Contraseña restablecida. Inicie sesión nuevamente.
+OK   REC-04 POST /api/auth/restablecer-con-codigo (código reutilizado) -> 400 Código o cuenta inválidos
+OK   REC-05 POST /api/auth/recuperacion/admin/3 -> 403 No tiene permisos para realizar esta operación
+OK   REC-06 POST /api/auth/recuperacion/admin/2 -> 201 Token generado. Entréguelo únicamente al titular verificado.
+OK   REC-07 POST /api/auth/restablecer-password (token admin) -> 200 Contraseña restablecida. Inicie sesión nuevamente.
+OK   REC-08 POST /api/auth/restablecer-password (token reutilizado) -> 400 Token inválido, utilizado o expirado
+OK   REC-09 GET /api/estancias (token emitido antes del restablecimiento) -> 401 Sesión revocada
+OK   HDR-01 GET /api/estancias (Origin: http://evil.test) -> 403 Origen no permitido por CORS
+OK   HDR-02 GET /health (cabeceras de seguridad) -> 200 status, timestamp
+OK   HDR-03 OPTIONS /api/estancias (preflight desde localhost:5173) -> 204 allow-origin: http://localhost:5173
+AUT-10 fuerza bruta -> 401,401,401,401,401,401,401,429,429,429,429
+
+72/72 aprobadas

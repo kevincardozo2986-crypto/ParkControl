@@ -17,8 +17,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Listar conductores
  *     description: Permite consultar todos los conductores a usuarios autenticados.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: Lista de conductores obtenida correctamente
@@ -33,8 +32,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Registrar conductor
  *     description: Solo los administradores pueden registrar conductores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -82,8 +80,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Consultar conductor por ID
  *     description: Disponible para administradores y usuarios autenticados.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -109,8 +106,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Actualizar conductor completamente
  *     description: Solo administradores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -160,8 +156,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Actualizar parcialmente un conductor
  *     description: Solo administradores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -206,8 +201,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
  *     summary: Eliminar conductor
  *     description: Solo administradores.
  *     security:
- *       - ApiKeyAuth: []
- *         BearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -235,7 +229,7 @@ const autorizarRoles = require("../middlewares/roles.middleware");
 r.get(
   "/",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   c.todos
 );
 
@@ -245,7 +239,7 @@ r.get(
 r.get(
   "/:id",
   autenticarJWT,
-  autorizarRoles("administrador", "usuario"),
+  autorizarRoles("administrador", "operador"),
   v.id,
   validar,
   c.porId

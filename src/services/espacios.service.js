@@ -1,51 +1,163 @@
-const datos = require("../data/espacios");
-const estancias = require("../data/estancias");
-const todos = () => datos;
-const disponibles = () => datos.filter((x) => x.estado === "disponible");
-const porId = (id) => datos.find((x) => x.id === Number(id));
-const crear = (d) => {
-  if (datos.some((x) => x.numero.toLowerCase() === d.numero.toLowerCase()))
-    return { error: "El número de espacio ya existe", status: 409 };
-  const x = {
-    id: datos.length ? Math.max(...datos.map((x) => x.id)) + 1 : 1,
-    ...d,
-    estado: "disponible",
-  };
-  datos.push(x);
-  return { data: x };
-};
-const actualizar = (id, d) => {
-  const n = Number(id),
-    i = datos.findIndex((x) => x.id === n);
-  if (i < 0) return { error: "Espacio no encontrado", status: 404 };
-  const dup = datos.find(
-    (x) => x.numero.toLowerCase() === d.numero.toLowerCase() && x.id !== n,
+
+const { query } = require("../config/database");
+
+const columnas = "id, numero, tipo, estado, ubicacion";
+
+// Listar todos los espacios
+const todos = async () => {
+  const resultado = await query(
+    `SELECT ${columnas}
+     FROM public.espacios
+     ORDER BY id`
   );
-  if (dup) return { error: "El número de espacio ya existe", status: 409 };
-  if (datos[i].estado === "ocupado" && d.tipo !== datos[i].tipo)
+  return resultado.rows;
+};
+
+// Listar espacios disponibles
+const disponibles = async () => {
+  const resultado = await query(
+    `SELECT ${columnas}
+     FROM public.espacios
+     WHERE estado = 'disponible'
+     ORDER BY id`
+  );
+  return resultado.rows;
+};
+
+// Buscar espacio por ID
+const porId = async (id) => {
+  const resultado = await query(
+    `SELECT ${columnas}
+     FROM public.espacios
+     WHERE id = $1`,
+    [id]
+  );
+  return resultado.rows[0] || null;
+};
+
+// Crear espacio
+const crear = async (d) => {
+  try {
+    const resultado = await query(
+      `INSERT INTO public.espacios
+       (numero, tipo, estado, ubicacion)
+       VALUES ($1, $2, 'disponible', $3)
+       RETURNING ${columnas}`,
+      [d.numero, d.tipo, d.ubicacion ?? null]
+    );
+    return { data: resultado.rows[0] };
+  } catch (error) {
+    if (error.code === "23505") {
+      return {
+        error: "El número de espacio ya existe",
+        status: 409,
+      };
+    }
+    throw error;
+  }
+};
+
+// Actualizar espacio
+const actualizar = async (id, d) => {
+  const actual = await porId(id);
+
+  if (!actual) {
+    return {
+      error: "Espacio no encontrado",
+      status: 404,
+    };
+  }
+
+  if (actual.estado === "ocupado" && d.tipo !== actual.tipo) {
     return {
       error: "No se puede cambiar el tipo de un espacio ocupado",
       status: 409,
     };
-  datos[i] = { ...datos[i], ...d, id: n, estado: datos[i].estado };
-  return { data: datos[i] };
+  }
+
+  try {
+    const resultado = await query(
+      `UPDATE public.espacios
+       SET numero = $1,
+           tipo = $2,
+           ubicacion = $3
+       WHERE id = $4
+       RETURNING ${columnas}`,
+      [d.numero, d.tipo, d.ubicacion ?? null, id]
+    );
+
+    return { data: resultado.rows[0] };
+  } catch (error) {
+    if (error.code === "23505") {
+      return {
+        error: "El número de espacio ya existe",
+        status: 409,
+      };
+    }
+    throw error;
+  }
 };
-const parcial = (id, d) => {
-  const actual = porId(id);
-  if (!actual) return { error: "Espacio no encontrado", status: 404 };
+
+// Actualizar parcialmente
+const parcial = async (id, d) => {
+  const actual = await porId(id);
+
+  if (!actual) {
+    return {
+      error: "Espacio no encontrado",
+      status: 404,
+    };
+  }
+
   return actualizar(id, { ...actual, ...d });
 };
-const eliminar = (id) => {
-  const n = Number(id),
-    i = datos.findIndex((x) => x.id === n);
-  if (i < 0) return { error: "Espacio no encontrado", status: 404 };
-  if (estancias.some((e) => e.espacioId === n))
+
+// Eliminar espacio
+const eliminar = async (id) => {
+  const actual = await porId(id);
+
+  if (!actual) {
+    return {
+      error: "Espacio no encontrado",
+      status: 404,
+    };
+  }
+
+  const estancias = await query(
+    `SELECT 1 FROM public.estancias
+     WHERE espacio_id = $1 LIMIT 1`,
+    [id]
+  );
+
+  if (estancias.rowCount > 0) {
     return {
       error: "No se puede eliminar el espacio porque tiene estancias asociadas",
       status: 409,
     };
-  return { data: datos.splice(i, 1)[0] };
+  }
+
+  try {
+    const resultado = await query(
+      `DELETE FROM public.espacios
+       WHERE id = $1
+       RETURNING ${columnas}`,
+      [id]
+    );
+
+    return resultado.rows[0]
+      ? { data: resultado.rows[0] }
+      : { error: "Espacio no encontrado", status: 404 };
+  } catch (error) {
+    if (error.code === "23503") {
+      return {
+        error: "No se puede eliminar el espacio porque tiene estancias asociadas",
+        status: 409,
+      };
+    }
+    throw error;
+  }
 };
+
 module.exports = {
   todos,
   disponibles,

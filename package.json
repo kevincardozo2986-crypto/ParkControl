@@ -1,12 +1,15 @@
 {
   "name": "parkcontrol-api",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "API REST segura para gestión de parqueadero ParkControl",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "check": "node --check src/app.js"
+    "check": "node --check src/app.js",
+    "seed:admin": "node src/scripts/crearAdmin.js",
+    "db:test": "node scripts/probar-conexion.js",
+    "audit": "npm audit --omit=dev"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -17,7 +20,9 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1",
     "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-dist": "^5.34.1",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
